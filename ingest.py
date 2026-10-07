@@ -2,8 +2,8 @@ import io, re, zipfile, requests
 from urllib.parse import urlparse, parse_qs
 from bs4 import BeautifulSoup
 
-IMG = {'png': 'image/png', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'webp': 'image/webp', 'gif': 'image/gif'}
-TEXTUAL = {'txt', 'md', 'markdown', 'csv', 'tsv', 'json', 'xml', 'log', 'yaml', 'yml'}
+IMG = {'png': 'image/png', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'}
+TEXTUAL = {'txt', 'md', 'markdown', 'csv', 'json', 'xml'}
 
 def _yt_id(url):
     u = urlparse(url)
@@ -37,25 +37,15 @@ def extract(file=None, url=None, text=None, title=None, ocr=None):
                 t = '\n'.join(sh.text_frame.text for sh in sl.shapes if sh.has_text_frame)
                 if t.strip(): pages.append((i + 1, t))
             return name, 'pptx', pages
-        if ext == 'epub':
-            z = zipfile.ZipFile(io.BytesIO(data)); pages = []
-            for n in sorted(z.namelist()):
-                if n.lower().endswith(('.xhtml', '.html', '.htm')):
-                    t = _html_text(z.read(n))[1]
-                    if t.strip(): pages.append((len(pages) + 1, t))
-            return name, 'epub', pages
-        if ext == 'odt':
-            xml = zipfile.ZipFile(io.BytesIO(data)).read('content.xml').decode('utf-8', errors='ignore')
-            return name, 'odt', [(None, BeautifulSoup(xml, 'html.parser').get_text('\n'))]
-        if ext == 'rtf':
-            from striprtf.striprtf import rtf_to_text
-            return name, 'rtf', [(None, rtf_to_text(data.decode('utf-8', errors='ignore')))]
-        if ext in ('html', 'htm'):
-            return name, 'html', [(None, _html_text(data)[1])]
-        if ext in IMG:
-            return name, 'image', [(None, ocr(data, IMG[ext]))]
-        if ext in TEXTUAL: return name, ext, [(None, data.decode('utf-8', errors='ignore'))]
-        raise ValueError(f'Unsupported file type: .{ext}')
+        if ext == 'xlsx':
+            from openpyxl import load_workbook
+            wb = load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+            pages = []
+            for i, ws in enumerate(wb.worksheets):
+                rows = [' | '.join('' if c is None else str(c) for c in r) for r in ws.iter_rows(values_only=True)]
+                t = '\n'.join(r for r in rows if r.strip(' |'))
+                if t.strip(): pages.append((i + 1, f'Sheet: {ws.title}\n{t}'))
+            return name, 'xlsx', pages
     if url:
         if re.search(r'(youtube\.com|youtu\.be)', url):
             from youtube_transcript_api import YouTubeTranscriptApi

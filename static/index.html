@@ -36,7 +36,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:320px minmax(0,1fr) 
 #sources{overflow:auto;padding:2px 10px 14px;flex:1}
 .src{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:12px}.src:hover{background:var(--panel2)}
 .tb{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:9.5px;font-weight:600;background:#3a3d42;color:#d7d9dd;text-transform:uppercase}
-.t-pdf{background:#5a2a2a;color:#ffb4ab}.t-docx,.t-odt,.t-rtf{background:#233a5e;color:#aecbfa}.t-pptx{background:#5a3b1d;color:#ffc98a}
+.t-pdf{background:#5a2a2a;color:#ffb4ab}.t-docx,.t-xlsx{background:#1d4a2e;color:#a8e6b9}.t-pptx{background:#5a3b1d;color:#ffc98a}
 .t-web,.t-youtube,.t-html{background:#1f4a3a;color:#a8e6c8}.t-image{background:#4a2a5a;color:#e2b8f5}
 .src .info{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0}
 .src .n{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.src .m{font-size:11.5px;color:var(--mute)}
@@ -151,7 +151,7 @@ input[type=text],textarea.t{width:100%;background:var(--panel2);border:1px solid
       <button class="tab" role="tab" data-t="url" aria-selected="false">Websites</button>
       <button class="tab" role="tab" data-t="text" aria-selected="false">Copied text</button>
     </div>
-    <div id="p-file"><div class="drop" id="drop"></div><input id="file" type="file" multiple hidden accept=".pdf,.docx,.pptx,.txt,.md,.csv,.tsv,.json,.html,.htm,.rtf,.odt,.epub,.png,.jpg,.jpeg,.webp,.gif"></div>
+    <div id="p-file"><div class="drop" id="drop"></div><input id="file" type="file" multiple hidden accept=".pdf,.docx,.pptx,.xlsx,.txt,.md,.csv,.json,.png,.jpg,.jpeg"></div>
     <div id="p-url" hidden><textarea class="t" id="url" placeholder="Paste website or YouTube links, one per line"></textarea><div class="hint">YouTube links use the video's transcript.</div></div>
     <div id="p-text" hidden><input type="text" id="ttl" placeholder="Title (optional)"><textarea class="t" id="txt" placeholder="Paste copied text here"></textarea></div>
     <div class="bar"><i id="barfill"></i></div>
@@ -190,7 +190,7 @@ up:svg('<path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 3 2l-1 4h6a2 2 0 0 1 2 2l-1.5 
 down:svg('<g transform="rotate(180 12 12)"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 3 2l-1 4h6a2 2 0 0 1 2 2l-1.5 6a2 2 0 0 1-2 2H7"/></g>')};
 const TILES=[['summary','Summary'],['study_guide','Study guide'],['briefing','Briefing doc'],['faq','FAQ'],['timeline','Timeline'],['quiz','Quiz'],['flashcards','Flashcards'],['data_table','Data table']];
 const LABEL=Object.fromEntries(TILES);
-const EXTS='pdf, docx, pptx, txt, md, csv, json, html, rtf, odt, epub, png, jpg, jpeg, webp, gif';
+const EXTS='pdf, docx, pptx, xlsx, txt, md, csv, json, png, jpg, jpeg';
 
 let nbs=[],cur=null,data={sources:[],messages:[],notes:[],totals:{}},cites={},busy=false,tab='file',files=[],pending=[],LIMIT=50;
 
@@ -219,7 +219,7 @@ function renderTotals(){
 }
 
 /* ---------- sources ---------- */
-const ABBR={pdf:'PDF',docx:'DOC',pptx:'PPT',txt:'TXT',md:'MD',csv:'CSV',json:'JSON',epub:'EPUB',odt:'ODT',rtf:'RTF',html:'HTML',web:'WEB',youtube:'YT',image:'IMG',text:'TXT'};
+const ABBR={pdf:'PDF',docx:'DOC',pptx:'PPT',txt:'TXT',md:'MD',csv:'CSV',json:'JSON',xlsx:'XLS',web:'WEB',youtube:'YT',image:'IMG',text:'TXT'};
 function renderSources(){
   const s=data.sources,on=s.filter(x=>x.enabled).length;
   $('#sources').innerHTML=s.length?s.map(x=>`<div class="src"><span class="tb t-${x.type}">${ABBR[x.type]||esc(x.type.slice(0,4))}</span><button class="info" data-open="${x.id}" title="Open source"><div class="n">${esc(x.name)}</div><div class="m">${x.chunks!=null?x.chunks+' chunks · ':''}${num(x.tokens)} tokens · ${money(x.cost)}</div></button><input type="checkbox" data-id="${x.id}" ${x.enabled?'checked':''} aria-label="Use ${esc(x.name)}"><button class="x" data-del="${x.id}" aria-label="Delete source">&times;</button></div>`).join(''):'<div class="empty">Saved sources will appear here.<br>Click Add sources above to add PDFs, websites, text, and more.</div>';

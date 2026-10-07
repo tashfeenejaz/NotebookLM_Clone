@@ -7,7 +7,7 @@ openai
 pypdf
 python-docx
 python-pptx
-striprtf
+openpyxl
 beautifulsoup4
 requests
 youtube-transcript-api
