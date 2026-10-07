@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+chromadb
+openai
+pypdf
+python-docx
+python-pptx
+striprtf
+beautifulsoup4
+requests
+youtube-transcript-api

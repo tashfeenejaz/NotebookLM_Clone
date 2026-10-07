@@ -1,0 +1,11 @@
+.env
+.venv/
+.git/
+__pycache__/
+*.pyc
+data/
+*.zip
+*.log
+.vscode/
+Dockerfile
+docker-compose.yml

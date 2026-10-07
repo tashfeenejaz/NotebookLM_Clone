@@ -1,0 +1,17 @@
+services:
+  notebook:
+    build: .
+    container_name: notebook
+    ports:
+      - "8000:8000"
+    env_file: .env            # OPENAI_API_KEY (and optional CHAT_MODEL) live here, never inside the image
+    volumes:
+      - notebook-data:/app/data           # your notebooks, sources, vectors (survives rebuilds)
+      # To keep data in a normal folder instead, replace the line above with:  - ./data:/app/data
+      # (run `mkdir -p data` first; works when your host user id is 1000)
+      - ./pricing.json:/app/pricing.json:ro   # edit prices/models without rebuilding
+      - ./static:/app/static:ro               # edit index.html without rebuilding
+    restart: unless-stopped
+
+volumes:
+  notebook-data:
