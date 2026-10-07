@@ -7,8 +7,8 @@ A self-hosted, NotebookLM-style research assistant. Add your own sources, ask qu
 ## Features
 
 **Sources** (up to 50 per notebook)
-- Upload files: PDF, DOCX, PPTX, TXT, MD, CSV, JSON, HTML, RTF, ODT, EPUB
-- Images (PNG, JPG, WEBP, GIF): text is read with the chat model's vision
+- Upload files: PDF, DOCX, PPTX, TXT, MD, CSV, JSON, HTML
+- Images (PNG, JPG, WEBP): text is read with the chat model's vision
 - Websites and YouTube links (YouTube uses the video transcript)
 - Pasted text
 - Per-source checkbox, select all, delete, and a card showing chunks, tokens and cost
@@ -108,7 +108,7 @@ ingest.py            text extraction for every source type, chunking
 db.py                SQLite tables and cost ledger
 static/index.html    the whole UI
 pricing.json         model prices
-Dockerfile, docker-compose.yml, run.sh
+Dockerfile, docker-compose.yml
 ```
 
 ## Limitations
